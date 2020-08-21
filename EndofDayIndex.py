@@ -10,7 +10,6 @@ import schedule
 import pandas as pd
 import glob, os
 #End of day index 'https://www.investing.com/indices/major-indices'
-#Volvo_Top10_Korea = ['US','UK','DE','CN','SE','NL','ES','FR','CA','IT','KR']
 #Market_Indices = ['S&P 500','FTSE 100','DAX','Shanghai','OMXS30','AEX','IBEX 35','CAC 40','S&P/TSX','FTSE MIB','KOSPI']
 #need to scrap from 1/22
 
@@ -76,12 +75,6 @@ def login(browser):
   browser.find_element_by_xpath('//*[@id="signup"]/a').click()
 
 
-
-download_data(AEX_url)
-download_data(IBEX35_url)
-download_data(CAC40_url)
-download_data(SPTSX_url)
-download_data(FTSEMIB_url)
 download_data(KOSPI_url)
 
 li = []
@@ -103,25 +96,25 @@ end_of_day_df = pd.concat(li, axis=0, ignore_index=True)
 end_of_day_df = end_of_day_df[['Index','Date','Price']]
 end_of_day_df.columns = ['Country','Date','Index']
 
-#Volvo_Top10_Korea = ['US','UK','DE','CN','SE','NL','ES','FR','CA','IT','KR']
 #Market_Indices = ['S&P 500','FTSE 100','DAX','Shanghai','OMXS30','AEX','IBEX 35','CAC 40','S&P/TSX','FTSE MIB','KOSPI']
-#Volvo_Top10_Korea = ['','','','','','','','FR','','IT','']
 
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("FTSE100", "GB")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("OMXStockholm", "SE")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("AEXHistorical", "NL")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("DAXHistorical", "DE")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("IBEX35", "ES")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("S&P_TSXComposite", "CA")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("CAC40", "FR")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("ShanghaiComposite", "CN")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("KOSPIHistorical", "KR")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("S&P500", "US")
-end_of_day_df['Country']= end_of_day_df['Country'].str.replace("FTSEMIB", "IT")
+def replace_string(df,column,index,country_code):
+  df[column] = df[column].str.replace(index,country_code)
 
+replace_string(end_of_day_df,'Country','FTSE100', 'GB')
+replace_string(end_of_day_df,'Country','OMXStockholm', 'SE')
+replace_string(end_of_day_df,'Country','AEXHistorical', 'NL')
+replace_string(end_of_day_df,'Country','DAXHistorical', 'DE')
+replace_string(end_of_day_df,'Country','IBEX35', 'ES')
+replace_string(end_of_day_df,'Country','S&P_TSXComposite', 'CA')
+replace_string(end_of_day_df,'Country','CAC40', 'FR')
+replace_string(end_of_day_df,'Country','ShanghaiComposite', 'CN')
+replace_string(end_of_day_df,'Country','KOSPIHistorical', 'KR')
+replace_string(end_of_day_df,'Country','S&P500', 'US')
+replace_string(end_of_day_df,'Country','FTSEMIB', 'IT')
 end_of_day_df = end_of_day_df.drop_duplicates(keep='first')
+replace_string(end_of_day_df,'Index',',', '')
 end_of_day_df['Index']= end_of_day_df['Index'].str.replace(',', '')
-end_of_day_df['Index'] = end_of_day_df['Index'].astype('float')
 
 #print(end_of_day_df.head())
 end_of_day_df['Date'] = pd.to_datetime(end_of_day_df['Date'])
